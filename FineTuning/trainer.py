@@ -26,6 +26,17 @@ def load_model(cfg):
 
 # TODO: Tokenization
 
+def load_lora_config(cfg):
+    lora_cfg = cfg["lora"]
+    lora_config = LoraConfig(
+        r = lora_cfg ["r"],
+        lora_alpha= lora_cfg ["lora_alpha"],
+        target_modules= lora_cfg ["target_modules"],
+        lora_dropout= lora_cfg ["lora_dropout"],
+        bias= lora_cfg["bias"],
+        task_type= lora_cfg["task_type"]
+    )
+    return lora_config
 
 if __name__ == "__main__":
     cfg = load_config("./configs/qwen.yaml")
