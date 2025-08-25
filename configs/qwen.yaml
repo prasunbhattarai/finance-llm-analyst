@@ -11,8 +11,7 @@ lora:
   lora_alpha: 16
   lora_dropout: 0.05
   bias: "none"
-  task_type: TaskType.CAUSAL_LM
-  target_modules: ["q_proj", "v_proj"]
+  target_modules: ["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"]
 
 training:
   num_train_epochs: 2
@@ -25,7 +24,9 @@ training:
   logging_steps: 50
   save_strategy: "epoch"
   remove_unused_columns: False
-  label_names: ["labels"]
+  label_names: ['labels']
+  eval_strategy: 'steps'
+  
 
 
 

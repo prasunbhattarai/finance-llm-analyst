@@ -1,9 +1,8 @@
 import torch
 import yaml
 from datasets import load_from_disk
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from transformers import AutoTokenizer,TrainingArguments,Trainer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, TaskType
-from trl import SFTTrainer, SFTConfig
 
 
 
@@ -26,13 +25,6 @@ def load_model(cfg):
     )
     return model
 
-def load_tokenier(cfg):
-    tokenizer = AutoTokenizer.from_pretrained(
-        cfg["model"]["name"]
-    )
-    tokenizer.pad_token = tokenizer.eos_token
-    return tokenizer
-
 def load_lora_config(cfg):
     lora_cfg = cfg["lora"]
     lora_config = LoraConfig(
@@ -41,47 +33,52 @@ def load_lora_config(cfg):
         target_modules= lora_cfg ["target_modules"],
         lora_dropout= lora_cfg ["lora_dropout"],
         bias= lora_cfg["bias"],
-        task_type= lora_cfg["task_type"]
+        task_type= TaskType.CAUSAL_LM
     )
     return lora_config
 
 
 def get_training_config(cfg):
     load_cfg = cfg["training"]
-    training_config = SFTConfig(
+    training_config = TrainingArguments(
         num_train_epochs= load_cfg["num_train_epochs"],
         per_device_train_batch_size= load_cfg["per_device_train_batch_size"],
         per_device_eval_batch_size= load_cfg["per_device_eval_batch_size"],
         gradient_accumulation_steps= load_cfg["gradient_accumulation_steps"],
-        learning_rate= load_cfg["learning_rate"],
+        learning_rate= float(load_cfg["learning_rate"]),
         fp16= load_cfg["fp16"],
+        eval_strategy = load_cfg["eval_strategy"],
         eval_steps= load_cfg["eval_steps"],
         logging_steps= load_cfg["logging_steps"],
-        save_strategy= "epoch",
+        save_strategy= load_cfg["save_strategy"],
+        label_names = load_cfg["label_names"],
         remove_unused_columns= load_cfg["remove_unused_columns"],
-        label_names= load_cfg["label_names"]
+
     )
     return training_config
 
 def train(cfg):
     dataset= load_from_disk(cfg["data"]["path"])
     model= load_model(cfg)
-    tokenizer= 0 # TODO: Add tokenizer
     lora_config = load_lora_config(cfg)
     model = get_peft_model(model, lora_config)
+    # Load training config
     training_config = get_training_config(cfg)
+ 
+    train_dataset = dataset.shuffle(seed=42).select(range(2000))
+    eval_dataset = dataset.shuffle(seed=42).select(range(2000, 2200))
 
-    trainer = SFTTrainer(
+    trainer = Trainer(
         model= model,
         args= training_config,
-        tokenizer= tokenizer,
-        train_dataset= dataset["train"],
-        eval_dataset= dataset["test"],
+        train_dataset= train_dataset,
+        eval_dataset= eval_dataset   
+
     )
 
     trainer.train()
     model.save_pretrained(cfg["output"]["dir"])
-    tokenizer.save_pretrained(cfg["output"]["dir"])
+
 
 
 if __name__ == "__main__":
