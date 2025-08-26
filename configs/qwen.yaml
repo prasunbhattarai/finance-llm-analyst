@@ -27,11 +27,9 @@ training:
   label_names: ['labels']
   eval_strategy: 'steps'
   
-
-
-
 data:
-  path: "./datasets/processed"
-
+  train_data: "./datasets/train/processed"
+  test_data: "./datasets/test/processed"
+  
 output:
   dir: "./models/fined_tuned"
