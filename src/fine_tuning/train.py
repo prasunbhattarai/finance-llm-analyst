@@ -11,14 +11,15 @@ def load_config(path: str):
         return yaml.safe_load(cfgs)
     
 def load_model(cfg):
+    load_cfg = cfg["model"]
     bnb_config = BitsAndBytesConfig(
-        bnb_4bit_compute_dtype = getattr(torch, cfg["model"]["quantization"]["bnb_4bit_compute_dtype"]),
-        bnb_4bit_quant_type = cfg["model"]["quantization"]["bnb_4bit_quant_type"],
-        load_in_4bit = cfg["model"]["quantization"]["load_in_4bit"]
+        bnb_4bit_compute_dtype = getattr(torch, load_cfg["quantization"]["bnb_4bit_compute_dtype"]),
+        bnb_4bit_quant_type = load_cfg["quantization"]["bnb_4bit_quant_type"],
+        load_in_4bit = load_cfg["quantization"]["load_in_4bit"]
     )
     model = AutoModelForCausalLM.from_pretrained(
-        cfg["model"]["model_name"],
-        cache_dir = cfg["model"]["cache_dir"],
+        load_cfg["model_name"],
+        cache_dir = load_cfg["cache_dir"],
         quantization_config = bnb_config,
         trust_remote_code = True,
         device_map = "auto"
@@ -58,7 +59,7 @@ def get_training_config(cfg):
     return training_config
 
 def train(cfg):
-    dataset= load_from_disk(cfg["data"]["path"])
+    dataset= load_from_disk(cfg["data"]["train_data"])
     model= load_model(cfg)
     lora_config = load_lora_config(cfg)
     model = get_peft_model(model, lora_config)
@@ -82,5 +83,5 @@ def train(cfg):
 
 
 if __name__ == "__main__":
-    cfg = load_config("./configs/qwen.yaml")
+    cfg = load_config("../configs/qwen.yaml")
     train(cfg)

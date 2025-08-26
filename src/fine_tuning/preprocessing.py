@@ -6,10 +6,10 @@ def load_config(path: str):
     with open (path, 'r') as cfgs:
         return yaml.safe_load(cfgs)
     
-cfg = load_config("./configs/qwen.yaml")
+cfg = load_config("../configs/qwen.yaml")
 
-dolly_dataset = load_dataset("databricks/databricks-dolly-15k", cache_dir="./datasets/raw/dolly")
-fiqa_dataset = load_dataset("llamafactory/fiqa", cache_dir="./datasets/raw/fiqa")
+dolly_dataset = load_dataset("databricks/databricks-dolly-15k", cache_dir="../datasets/raw/dolly")
+fiqa_dataset = load_dataset("llamafactory/fiqa", cache_dir="../datasets/raw/fiqa")
 
 tokenizer = AutoTokenizer.from_pretrained(cfg["model"]["model_name"])
 tokenizer.pad_token = tokenizer.eos_token
@@ -55,12 +55,19 @@ def tokenize(batch):
 dolly_dataset = dolly_dataset["train"].map(dolly_format, remove_columns=dolly_dataset["train"].column_names)
 fiqa_dataset = fiqa_dataset["train"].map(fiqa_format, remove_columns=fiqa_dataset["train"].column_names)
 
-tokenized_dolly = dolly_dataset.map(tokenize, batched=True, remove_columns=["text"]).select(range(1100))
-tokenized_fiqa = fiqa_dataset.map(tokenize, batched=True, remove_columns=["text"]).select(range(1100))
+tokenized_dolly = dolly_dataset.map(tokenize, batched=True, remove_columns=["text"]).select(range(1200))
+tokenized_fiqa = fiqa_dataset.map(tokenize, batched=True, remove_columns=["text"]).select(range(1200))
 
-tokenized_dataset= concatenate_datasets([tokenized_dolly,tokenized_fiqa])
+test_dolly = dolly_dataset.map(tokenize, batched=True, remove_columns=["text"]).select(range(1100,2200))
+test_fiqa = fiqa_dataset.map(tokenize, batched=True, remove_columns=["text"]).select(range(1100,2200))
 
-tokenized_dataset.save_to_disk("./datasets/processed")
+
+
+tokenized_dataset= concatenate_datasets([tokenized_dolly,tokenized_fiqa]).shuffle(seed=42)
+test_tokenized_dataset= concatenate_datasets([test_dolly,test_fiqa]).shuffle(seed=42)
+
+test_tokenized_dataset.save_to_disk("../datasets/test/processed")
+tokenized_dataset.save_to_disk("../datasets/train/processed")
 
 tokenizer.save_pretrained(cfg["output"]["dir"])
 

@@ -1,6 +1,6 @@
 venv
 datasets
 models
-
+trainer_output
 outputs
 

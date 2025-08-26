@@ -47,26 +47,31 @@ def build_eval_loader(cfg):
 
 import math
 @torch.no_grad()
-def compute_perplexity(model, eval_loader):
+def compute_perplexity(model, eval_loader, pad_token_id):
     losses = []
     for batch in eval_loader:
         batch = {k: v.to('cuda') for k, v in batch.items()}
+        if "labels" in batch:
+            batch["labels"][batch["labels"] == pad_token_id] = -100
+
+
         loss = model(**batch).loss
         losses.append(loss.item())
     return math.exp(sum(losses) / len(losses))
 
 def run_eval(cfg):
+    tokenizer = AutoTokenizer.from_pretrained(cfg["model"]["model_name"])
     base_model = load_base_model(cfg)
     fine_tuned = load_merged_finetuned_model(cfg)
     eval_loader = build_eval_loader(cfg)
 
-    base_ppl = compute_perplexity(base_model, eval_loader)
-    tuned_ppl = compute_perplexity(fine_tuned, eval_loader)
+    base_ppl = compute_perplexity(base_model, eval_loader, tokenizer.pad_token_id)
+    tuned_ppl = compute_perplexity(fine_tuned, eval_loader, tokenizer.pad_token_id)
 
     print(f"Base Model Perplexity: {base_ppl:.4f}")
     print(f"Tuned Model Perplexity: {tuned_ppl:.4f}")
 
 
 if __name__ == "__main__":
-    cfg = load_config("./configs/qwen.yaml")
+    cfg = load_config("../configs/qwen.yaml")
     run_eval(cfg)

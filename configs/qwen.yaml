@@ -1,6 +1,6 @@
 model:
   model_name: "Qwen/Qwen2.5-3B-Instruct"
-  cache_dir: "./models/base_model"
+  cache_dir: "../models/base_model"
   quantization:
     load_in_4bit: True
     bnb_4bit_compute_dtype: "float16"
@@ -14,22 +14,22 @@ lora:
   target_modules: ["q_proj","k_proj","v_proj","o_proj","gate_proj","up_proj","down_proj"]
 
 training:
-  num_train_epochs: 2
-  per_device_train_batch_size: 1
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
   per_device_eval_batch_size: 4
   gradient_accumulation_steps: 2
-  learning_rate: 2e-5
+  learning_rate: 3e-5
   fp16: True
-  eval_steps: 200
-  logging_steps: 50
+  eval_steps: 500
+  logging_steps: 100
   save_strategy: "epoch"
   remove_unused_columns: False
   label_names: ['labels']
   eval_strategy: 'steps'
   
 data:
-  train_data: "./datasets/train/processed"
-  test_data: "./datasets/test/processed"
+  train_data: "../datasets/train/processed"
+  test_data: "../datasets/test/processed"
   
 output:
-  dir: "./models/fined_tuned"
+  dir: "../models/fined_tuned"
