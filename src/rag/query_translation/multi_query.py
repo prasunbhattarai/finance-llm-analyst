@@ -23,3 +23,4 @@ def multi_query(cfg):
         Original question: {question}""",    
     )
     llm_chain= query_prompt | llm | output_parser
+    return llm_chain
