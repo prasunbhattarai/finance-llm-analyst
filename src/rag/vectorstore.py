@@ -26,7 +26,7 @@ def vectorstore(docs, persist_dir="./chroma_db", model_name="sentence-transforme
     reranker= CrossEncoderReranker(model=cross_encoder)
 
     retriever = ContextualCompressionRetriever(
-        base_retriever= vectordb.as_retriever(search_kwargs={"k":10})
+        base_retriever= vectordb.as_retriever(search_kwargs={"k":10}),
         base_compressor= reranker
     )
     
