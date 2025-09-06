@@ -3,9 +3,17 @@ from .page_loader import load_websites
 from .vectorstore import vectorstore
 from .base import load_finetuned_llm
 from langchain_core.prompts import PromptTemplate
+import yaml
+import os
 
+def load_config(filename: str):
+    # Go three levels up: pipeline.py -> rag -> src -> Finance (root)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    config_path = os.path.join(project_root, "configs", filename)
 
-
+    with open(config_path, "r") as cfgs:
+        return yaml.safe_load(cfgs)
+    
 def pipiline(cfg,question,urls):
     
     docs = load_websites(urls)
@@ -54,3 +62,26 @@ def pipiline(cfg,question,urls):
     answer = chain.invoke({"context":context, "question":question})
     
     return answer
+
+if __name__ == "__main__":
+    cfg = load_config("qwen.yaml")
+
+    question =  input("Enter Your question")
+
+    urls = [
+    "https://www.investopedia.com/terms/c/compoundinterest.asp",
+    "https://www.investopedia.com/terms/i/inflation.asp",
+    "https://www.investopedia.com/terms/e/etf.asp",
+
+    "https://finance.yahoo.com/quote/AAPL/",
+    "https://finance.yahoo.com/quote/TSLA/",
+
+    "https://www.cnbc.com/markets/",
+    "https://www.reuters.com/finance/",
+
+    "https://www.federalreserve.gov/monetarypolicy/openmarket.htm"
+    ]
+
+    pipiline(cfg,question, urls)
+
+

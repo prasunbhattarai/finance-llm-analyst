@@ -1,6 +1,6 @@
 model:
   model_name: "Qwen/Qwen2.5-3B-Instruct"
-  cache_dir: "../models/base_model"
+  cache_dir: "models/base_model"
   quantization:
     load_in_4bit: True
     bnb_4bit_compute_dtype: "float16"
@@ -32,4 +32,4 @@ data:
   test_data: "../datasets/test/processed"
   
 output:
-  dir: "../models/fined_tuned"
+  dir: "models/fined_tuned"
