@@ -1,6 +1,9 @@
 venv
 datasets
 models
+chroma_db
 trainer_output
 outputs
+tokens
+
 

@@ -2,15 +2,14 @@ from typing import List
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel, Field
-from .base import load_finetuned_llm
-
+from .base import loaded_model
 class LineListOutputParser(BaseOutputParser[List[str]]):
     def parse(self, text):
         lines = text.strip().split("\n")
         return list(filter(None,lines))
     
 def multi_query(cfg):
-    llm= load_finetuned_llm(cfg)
+    llm= loaded_model(cfg)
     output_parser= LineListOutputParser()
 
     query_prompt = PromptTemplate(
