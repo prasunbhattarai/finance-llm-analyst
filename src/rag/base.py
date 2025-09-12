@@ -41,7 +41,7 @@ def loaded_model(cfg):
         "text-generation",
         model = load_merged_finetuned_model(cfg),
         tokenizer=tokenizer(cfg),
-        max_new_tokens=512,   
+        max_new_tokens=256,   
         temperature=0.7,
         do_sample=False,
     )
