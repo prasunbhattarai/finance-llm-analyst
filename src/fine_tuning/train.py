@@ -3,11 +3,20 @@ import yaml
 from datasets import load_from_disk
 from transformers import AutoTokenizer,TrainingArguments,Trainer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, TaskType
+import os
 
 
+def load_config(filename: str):
+    """
+    Load a YAML config file from the project's configs directory.
+    """
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    config_path = os.path.join(project_root, "configs", filename)
 
-def load_config(path: str):
-    with open (path, 'r') as cfgs:
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+
+    with open(config_path, "r") as cfgs:
         return yaml.safe_load(cfgs)
     
 def load_model(cfg):
