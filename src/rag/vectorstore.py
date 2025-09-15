@@ -5,7 +5,7 @@ from langchain.retrievers.document_compressors import CrossEncoderReranker
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 
 
-def vectorstore(docs, persist_dir="./chroma_db", model_name="sentence-transformers/all-MiniLM-L6-v2"):
+def vectorstore(docs, persist_dir, model_name="sentence-transformers/all-MiniLM-L6-v2"):
     embeddings = HuggingFaceEmbeddings(model_name= model_name)
 
     vectordb = Chroma(
@@ -21,7 +21,7 @@ def vectorstore(docs, persist_dir="./chroma_db", model_name="sentence-transforme
     else:
         print(f"Vector store already has {collection_count} documents. Skipping addition.")
 
-    cross_encoder = HuggingFaceCrossEncoder(model_name="cross-encoder/ms-marco-TinyBERT-L-2-v2", model_kwargs={"device": "cpu"})   
+    cross_encoder = HuggingFaceCrossEncoder(model_name="cross-encoder/ms-marco-TinyBERT-L-2-v2")   
     reranker= CrossEncoderReranker(model=cross_encoder)
 
     retriever = ContextualCompressionRetriever(
