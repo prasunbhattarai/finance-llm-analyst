@@ -14,7 +14,20 @@ def clean_html(raw_html):
 
     return " ".join(text.split())
 
-def load_websites(urls: list[str]):
+urls = [
+    "https://www.investopedia.com/terms/c/compoundinterest.asp",
+    "https://www.investopedia.com/terms/i/inflation.asp",
+    "https://www.investopedia.com/terms/e/etf.asp",
+    "https://www.federalreserve.gov/monetarypolicy/openmarket.htm",
+    "https://www.kiplinger.com/investing/diy-investors-dont-make-these-mistakes",
+    "https://www.investopedia.com/the-federal-reserve-meeting-starts-today-what-you-need-to-know-11810701",
+    "https://www.investopedia.com/market-faces-usd1-5-trillion-downside-if-trump-fires-fed-chair-powell-study-warns-11809083",
+    "https://www.investopedia.com/investing-in-cryptocurrency-5215269",
+    "https://www.investopedia.com/articles/personal-finance/081514/what-do-credit-score-ranges-mean.asp",
+    "https://www.investopedia.com/the-hidden-costs-of-ignoring-your-taxes-what-you-should-be-aware-of-11799289"
+]
+
+def load_websites():
     docs = []
     for url in urls:
         loader = WebBaseLoader(url)
