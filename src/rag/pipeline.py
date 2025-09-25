@@ -3,32 +3,19 @@ from .page_loader import load_websites, split_docs
 from .csv_loader import csv_to_docs
 from .vectorstore import vectorstore
 from .base import loaded_model
-import pandas as pd
+from .utils import post_processing
 from langchain_core.prompts import PromptTemplate
 from langchain.retrievers import MultiQueryRetriever
-import yaml
-import os
+import transformers
 
-def load_config(filename: str):
-    """
-    Load a YAML config file from the project's configs directory.
-    """
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    config_path = os.path.join(project_root, "configs", filename)
 
-    if not os.path.exists(config_path):
-        raise FileNotFoundError(f"Config file not found: {config_path}")
-
-    with open(config_path, "r") as cfgs:
-        return yaml.safe_load(cfgs)
-    
+transformers.logging.set_verbosity_error()    
 class Pipeline:
-    def __init__(self, cfg, urls, llm):
+    def __init__(self, cfg, llm):
         self.cfg = cfg
-        self.urls = urls
         self.llm = llm
 
-        docs = split_docs(load_websites(urls))
+        docs = split_docs(load_websites())
         self.web_retriever = vectorstore(docs, persist_dir="./chroma_db/webpages")
 
         stocks_docs = csv_to_docs(cfg["Stocks"]["stocks_dataset"])
@@ -39,17 +26,18 @@ class Pipeline:
         self.prompt = PromptTemplate(
         input_variables=["context","question"],
         template = """
-        Answer the following question using the context below. 
-        Use step-by-step reasoning and give a final conclusion.
-        If context is empty, answer based on your own knowledge.
+        You are an expert financial assistant. Use ONLY the provided context  to answer the user question. Each answer can only be of 3-4 sentences. 
+        If the answer is not contained in the snippets, say you don't know and give a short explanation of what additional 
+        information would be needed.\n\n"
 
         Question:
         {question}
 
-        Context (may be empty):
+        Context:
         {context}
 
-        Answer (with reasoning and conclusion):
+        Answer:
+
         """
         )
 
@@ -68,7 +56,7 @@ class Pipeline:
 
 
         unique_docs = list({doc.page_content: doc for doc in retrieved_docs}.values())
-        # limited_docs = unique_docs[:3]   # take only top 3 (adjust if GPU allows more)
+        # unique_docs = unique_docs[:3]   
         if unique_docs:
             context = "\n\n".join(doc.page_content for doc in unique_docs)
         else:
@@ -76,22 +64,13 @@ class Pipeline:
 
         answer = self.chain.invoke({"context":context, "question":question})
         
+        answer = post_processing(answer)
+
         return answer
 
-
-
-if __name__ == "__main__":
-    cfg = load_config("qwen.yaml")
-
-
-    urls = [
-    "https://www.investopedia.com/terms/c/compoundinterest.asp",
-    "https://www.investopedia.com/terms/i/inflation.asp",
-    "https://www.investopedia.com/terms/e/etf.asp",
-    "https://www.federalreserve.gov/monetarypolicy/openmarket.htm"
-    ]
+def main(cfg):
     llm = loaded_model(cfg)
-    pipeline= Pipeline(cfg, urls, llm)
+    pipeline= Pipeline(cfg, llm)
     print("Finance Analyts ready. Type 'exit' to quit")
     while True:
         question = input("Enter your question: ").strip()
@@ -100,4 +79,4 @@ if __name__ == "__main__":
             break
         answer = pipeline.ask(question)
         print("\n===Final Answer===\n")
-        print(answer) 
+        print(f"{answer}\n") 
