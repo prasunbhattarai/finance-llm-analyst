@@ -29,8 +29,8 @@ def load_base_model(cfg):
 
 def load_merged_finetuned_model(cfg):
     temp_model = load_base_model(cfg)
-    adapter_path = cfg["output"]["dir"]
-    fined_tuned = PeftModel.from_pretrained(temp_model, adapter_path)
+    adapter_source = cfg["output"]["hf_repo"]
+    fined_tuned = PeftModel.from_pretrained(temp_model, adapter_source, cache_dir=cfg["output"]["dir"])
     # fined_tuned = fined_tuned.merge_and_unload().eval()
     return fined_tuned.eval()
 
