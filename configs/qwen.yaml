@@ -22,6 +22,7 @@ training:
   fp16: True
   eval_steps: 500
   logging_steps: 100
+  logging_dir: "./logs"
   save_strategy: "epoch"
   remove_unused_columns: False
   label_names: ['labels']
