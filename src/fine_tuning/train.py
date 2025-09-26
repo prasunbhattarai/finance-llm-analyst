@@ -1,10 +1,9 @@
+import os
 import torch
 import yaml
 from datasets import load_from_disk
 from transformers import AutoTokenizer,TrainingArguments,Trainer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, TaskType
-import os
-
 
 def load_config(filename: str):
     """
@@ -62,6 +61,7 @@ def get_training_config(cfg):
         logging_steps= load_cfg["logging_steps"],
         save_strategy= load_cfg["save_strategy"],
         label_names = load_cfg["label_names"],
+        logging_dir= load_cfg["logging_dir"],
         remove_unused_columns= load_cfg["remove_unused_columns"],
 
     )
@@ -90,7 +90,6 @@ def train(cfg):
     model.save_pretrained(cfg["output"]["dir"])
 
 
-
 if __name__ == "__main__":
-    cfg = load_config("../configs/qwen.yaml")
+    cfg = load_config("qwen.yaml")
     train(cfg)
