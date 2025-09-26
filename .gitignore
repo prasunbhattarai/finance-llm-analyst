@@ -6,5 +6,5 @@ trainer_output
 outputs
 tokens
 .vscode
-
+src\__pycache__\
 
