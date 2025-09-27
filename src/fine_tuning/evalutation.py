@@ -6,9 +6,19 @@ from peft import PeftModel
 import yaml
 from datasets import load_from_disk
 import math
+import os
 
-def load_config(path: str):
-    with open (path, 'r') as cfgs:
+def load_config(filename: str):
+    """
+    Load a YAML config file from the project's configs directory.
+    """
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    config_path = os.path.join(project_root, "configs", filename)
+
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Config file not found: {config_path}")
+
+    with open(config_path, "r") as cfgs:
         return yaml.safe_load(cfgs)
     
 def load_base_model(cfg):
@@ -45,19 +55,28 @@ def build_eval_loader(cfg):
     )
     return eval_loader
 
-import math
 @torch.no_grad()
 def compute_perplexity(model, eval_loader, pad_token_id):
-    losses = []
+    total_loss = 0
+    total_tokens = 0
+
     for batch in eval_loader:
-        batch = {k: v.to('cuda') for k, v in batch.items()}
+        batch = {k: v.to(model.device) for k, v in batch.items()}
         if "labels" in batch:
             batch["labels"][batch["labels"] == pad_token_id] = -100
 
+        outputs = model(**batch)
+        loss = outputs.loss
 
-        loss = model(**batch).loss
-        losses.append(loss.item())
-    return math.exp(sum(losses) / len(losses))
+        # Count number of tokens (ignoring padding)
+        n_tokens = (batch["labels"] != -100).sum().item()
+
+        total_loss += loss.item() * n_tokens
+        total_tokens += n_tokens
+
+    avg_loss = total_loss / total_tokens
+    return math.exp(avg_loss)
+
 
 def run_eval(cfg):
     tokenizer = AutoTokenizer.from_pretrained(cfg["model"]["model_name"])
