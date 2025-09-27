@@ -1,8 +1,8 @@
 from typing import List
 from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts import PromptTemplate
-from pydantic import BaseModel, Field
-from .base import loaded_model
+from src.rag.model import loaded_model
+
 class LineListOutputParser(BaseOutputParser[List[str]]):
     def parse(self, text):
         lines = text.strip().split("\n")
