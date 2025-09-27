@@ -1,14 +1,13 @@
-from .multi_query import multi_query 
-from .page_loader import load_websites, split_docs
-from .csv_loader import csv_to_docs
-from .vectorstore import vectorstore
-from .base import loaded_model
+from src.rag.model import loaded_model
+from src.rag.retriever import multi_query
+from src.rag.loader import load_websites, split_docs, csv_to_docs
+from src.rag.retriever import vectorstore
+from src.rag.model.base import loaded_model
+from src.rag.processing import post_processing, is_finance_question
 from langchain_core.prompts import PromptTemplate
 import transformers
-import re
 
-
-transformers.logging.set_verbosity_error()    
+transformers.logging.set_verbosity_error()
 
 
 class Pipeline:
@@ -36,46 +35,7 @@ class Pipeline:
         )
 
         self.chain = self.prompt | self.llm
-    def is_finance_question(self, question):
-       check_prompt = f"""
-       Classify the following user question strictly as 'finance' or 'not finance'.
-       Only return one word: either finance or not.
-
-       Question: "{question}"
-       Answer:
-       """
-       result = self.llm.invoke(check_prompt)
-
-       if isinstance(result, dict):
-           result = result.get("text") or str(result)
-
-       result = result.strip().lower()
-
-       # extract only what comes after "answer:"
-       if "answer:" in result:
-           result = result.split("answer:")[-1].strip()
-
-       # only take the first word (ignore explanations)
-       first_word = result.split()[0] if result else ""
-       first_word = re.sub(r'[^a-z]', '', first_word)
-       print(f"[DEBUG] Raw: {result} | Parsed: {first_word}")
-
-       return first_word == "finance"
-
-    
-    def post_processing(self, answer):
-        if isinstance(answer, dict):
-            answer = answer.get("text") or answer.get("output") or str(answer)
-
-        if "Answer:" in answer:
-            answer = answer.split("Answer:")[-1]
-
-        sentences = [s.strip() for s in answer.split('.') if s.strip()]
-        trimmed = '. '.join(sentences[:3]) + ('.' if sentences else '')
-
-        return trimmed
-
-    
+        
     def ask(self, question):
         queries = self.query_chain.invoke({"question": question})
         retrieved_docs = []
@@ -92,28 +52,25 @@ class Pipeline:
         context = "\n\n".join(doc.page_content for doc in unique_docs) if unique_docs else "No relevant documents found."
 
         raw_answer = self.chain.invoke({"context": context, "question": question})
-        clean_answer = self.post_processing(raw_answer)
+        clean_answer = post_processing(raw_answer)
 
         return clean_answer
 
 
 def main(cfg):
     llm = loaded_model(cfg)
-    pipeline = Pipeline(cfg, llm)
-    print("Finance Analyst ready. Type 'exit' to quit")
+    pipeline = Pipeline(cfg, llm) 
+    print("\nFinance Analyst ready. Type 'exit' to quit\n")
 
     while True:
         question = input("Enter your question: ").strip()
         if question.lower() in ("exit", "quit"):
             break
         # classify first
-        if not pipeline.is_finance_question(question):
+        if not is_finance_question(question, llm):
             print("I can only answer finance related questions.\n")
             continue  
         else:
             answer = pipeline.ask(question)
         print("\n=== Final Answer ===\n")
         print(answer + "\n")
-
-
-
