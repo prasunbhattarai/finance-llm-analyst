@@ -18,7 +18,6 @@ def load_config(filename: str):
     
 cfg = load_config("../configs/qwen.yaml")
 
-# ---------------- Formatting functions ---------------- #
 def finance_format(dataset):
     rules = dataset["rules"]   
     instruction = dataset["question"]
@@ -91,6 +90,5 @@ def prepare_datasets(cfg: dict, test_size: float = 0.1, seed: int = 42):
     return train_dataset, test_dataset, tokenizer
 
 
-# ---------------- Usage ---------------- #
 if __name__ == "__main__":
     train_dataset, test_dataset, tokenizer = prepare_datasets(cfg)
