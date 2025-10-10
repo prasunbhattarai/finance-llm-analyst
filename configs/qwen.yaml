@@ -32,7 +32,7 @@ training:
 data:
   dolly_dir: "datasets/raw/dolly"
   fiqa_dir: "datasets/raw/fiqa"
-  synthetic_dir: "datasets/synthetic_dataset/dataset.json"
+  synthetic_dir: "dataset/synthetic_dataset/dataset.json"
   train_data: "datasets/train"
   test_data: "datasets/test"
   
@@ -44,7 +44,7 @@ output:
 # For RAG
 
 Stocks:
-  stocks_dataset: "dataset/stocks_data.csv"
+  stocks_dataset: "dataset/stocks_dataset/stocks_data.csv"
 
 Chroma:
   persist_dir: "chroma_db"
