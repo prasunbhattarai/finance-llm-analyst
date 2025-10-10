@@ -1,110 +1,141 @@
-🧠 Finance Analyst — Domain-Specific Qwen2.5 LoRA + RAG System
+# 🧠 Finance Analyst
 
-A domain-specialized Finance Q&A Agent that combines LoRA fine-tuned Qwen2.5-3B with RAG (Retrieval-Augmented Generation) to deliver context-grounded, concise, and reliable financial answers.
-It can classify finance-related questions, retrieve real-time financial data from curated sources, and generate expert-level summaries.
+> A domain-specialized Finance Q&A Agent combining LoRA fine-tuned Qwen2.5-3B with RAG for context-grounded, reliable financial insights.
 
-🚀 Features
+[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Model](https://img.shields.io/badge/Model-Qwen2.5--3B-orange.svg)](https://huggingface.co/Qwen)
 
-✅ Fine-tuned Qwen2.5-3B on financial datasets (Dolly + FIQA + synthetic finance QA) using LoRA
-✅ 4-bit quantized inference for efficient deployment
-✅ Integrated Retriever + Reranker (Chroma + Cross-Encoder)
-✅ Contextual multi-query expansion for better document recall
-✅ Dynamic finance question classifier
-✅ End-to-end RAG pipeline with clean post-processing
-✅ Interactive CLI: “Finance Analyst ready. Type ‘exit’ to quit”
+---
 
-🏗️ Architecture Overview
-                ┌─────────────────────────────┐
-                │  User Question (Finance?)   │
-                └──────────────┬──────────────┘
-                               │
-                    Yes        ▼
-                   ┌────────────────────┐
-                   │ Multi-Query Expander│
-                   └────────────┬────────┘
-                                ▼
-                 ┌────────────────────────────┐
-                 │ Web + Stock Retriever (RAG)│
-                 └────────────┬───────────────┘
-                              ▼
-                   ┌────────────────────────┐
-                   │ Fine-Tuned Qwen2.5 LLM │
-                   └────────────┬───────────┘
-                                ▼
-                         Final Answer
+## 📋 Overview
 
-🧩 Components
-1. Fine-Tuning (LoRA)
+This project delivers an intelligent financial assistant that classifies finance-related questions, retrieves real-time financial data from curated sources, and generates expert-level summaries using state-of-the-art NLP techniques.
 
-Model: Qwen2.5-3B
-Quantization: 4-bit (bnb_4bit_compute_dtype=float16)
-Adapters: LoRA with r=16, alpha=32, target_modules=['q_proj','v_proj']
+### Key Capabilities
 
+- 🎯 **Domain Classification** — Filters non-finance queries automatically
+- 📚 **RAG Pipeline** — Retrieves and reranks relevant financial documents
+- 🤖 **Fine-tuned LLM** — Qwen2.5-3B optimized for financial Q&A
+- ⚡ **Efficient Inference** — 4-bit quantization for fast responses
+- 🔍 **Smart Retrieval** — Multi-query expansion for better recall
+
+---
+
+## 🚀 Features
+
+| Feature | Description |
+|---------|-------------|
+| **Fine-tuned Model** | Qwen2.5-3B trained on Dolly, FIQA, and synthetic finance datasets using LoRA |
+| **Quantized Inference** | 4-bit quantization for efficient deployment |
+| **Advanced RAG** | Chroma vectorstore + Cross-Encoder reranking |
+| **Query Expansion** | Contextual multi-query generation for improved retrieval |
+| **Domain Filtering** | Automatic classification of finance-related questions |
+| **Clean Output** | Post-processed responses trimmed to 3 concise sentences |
+| **Interactive CLI** | User-friendly command-line interface |
+
+---
+
+## 🏗️ Architecture
+
+```
+┌─────────────────────────────┐
+│  User Question (Finance?)   │
+└──────────────┬──────────────┘
+               │
+    Yes        ▼
+   ┌────────────────────┐
+   │ Multi-Query Expander│
+   └────────────┬────────┘
+                ▼
+ ┌────────────────────────────┐
+ │ Web + Stock Retriever (RAG)│
+ └────────────┬───────────────┘
+              ▼
+   ┌────────────────────────┐
+   │ Fine-Tuned Qwen2.5 LLM │
+   └────────────┬───────────┘
+                ▼
+         Final Answer
+```
+
+---
+
+## 🧩 Components
+
+### 1. Fine-Tuning (LoRA)
+
+**Model Configuration:**
+- Base Model: `Qwen2.5-3B`
+- Quantization: 4-bit (bnb_4bit_compute_dtype=float16)
+- LoRA Parameters: r=16, alpha=32
+- Target Modules: `['q_proj', 'v_proj']`
+
+```python
 trainer.train()
 results = trainer.evaluate()
 print("Perplexity:", math.exp(results["eval_loss"]))
+```
 
+**Training Performance:**
+- ✅ Smooth convergence with stable loss reduction
+- ✅ Final Perplexity: **2.95**
 
-Training converged smoothly — see the training_loss.png graph for stable loss reduction.
+### 2. Training Data
 
-2. Data Preparation
-Fine-tuning Dataset:
+**Fine-tuning Dataset:**
+- 🧾 **Dolly 15k** — Instruction-based dialogue
+- 💰 **FIQA** — Financial sentiment + Q&A
+- 🧠 **Synthetic Finance QA** — GPT-4 style templates
 
-🧾 Dolly 15k — Instruction-based dialogue
+**RAG Corpus:**
+- 📊 CSV-based stock data (Apple, Tesla, etc.)
+- 🌐 Curated finance URLs:
+  - Investopedia (ETF, compound interest, inflation, credit score)
+  - Federal Reserve policy pages
+  - Kiplinger (investing mistakes)
+  - Tax awareness and Fed meeting summaries
 
-💰 FIQA — Financial sentiment + question-answering
+### 3. Retrieval System (RAG)
 
-🧠 Synthetic Finance QA — Generated with GPT-4 style templates
+| Component | Technology |
+|-----------|------------|
+| **Embeddings** | all-MiniLM-L6-v2 |
+| **Vectorstore** | Chroma (persistent) |
+| **Reranker** | cross-encoder/ms-marco-TinyBERT-L-2-v2 |
+| **Chunking** | 1000 chars per chunk, 100 overlap |
+| **Enhancement** | Multi-query expansion for semantic recall |
 
-RAG Corpus:
+### 4. Finance Classification
 
-📊 CSV-based stock data (Apple, Tesla, etc.)
+Every question is validated before processing:
 
-🌐 Curated finance URLs:
-
-Investopedia (ETF, compound interest, inflation, credit score)
-
-Federal Reserve policy pages
-
-Kiplinger (investing mistakes)
-
-Tax awareness and Fed meeting summaries
-
-3. Retrieval System (RAG)
-
-Embeddings: all-MiniLM-L6-v2
-
-Vectorstore: Chroma (persistent)
-
-Reranker: cross-encoder/ms-marco-TinyBERT-L-2-v2
-
-Multi-query expansion for semantic recall improvement
-
-Chunking: 1000 chars per chunk, 100 overlap
-
-4. Finance Classification
-
-Before retrieval, every question is validated:
-
+```
 You are a financial domain classifier.
 Classify the following question as 'finance' or 'not'.
+```
 
+**Response for non-finance queries:**
+> "I can only answer finance-related questions."
 
-Non-finance queries are filtered automatically:
+### 5. Post-Processing
 
-“I can only answer finance-related questions.”
+- Outputs trimmed to **3 concise sentences**
+- Cleaned from verbose model artifacts
+- Structured and readable format
 
-5. Post-Processing
+---
 
-Outputs are trimmed to 3 concise sentences and cleaned from verbose model artifacts.
+## 💻 Example Usage
 
-💻 Example Run
+```bash
 Finance Analyst ready. Type 'exit' to quit
 
 Enter your question: What could be the market impact if President Trump fires Fed Chair Jerome Powell?
 
 === Final Answer ===
-The market impact of firing Fed Chair Jerome Powell could be significant, potentially wiping out $1.5 trillion from the stock market...
+The market impact of firing Fed Chair Jerome Powell could be significant, 
+potentially wiping out $1.5 trillion from the stock market...
 
 Enter your question: Who is Cristiano Ronaldo?
 I can only answer finance related questions.
@@ -112,76 +143,124 @@ I can only answer finance related questions.
 Enter your question: What are the stock prices of apple?
 
 === Final Answer ===
-Apple's stock price is $231.83 USD. It has a P/E ratio of 30.3 and a market capitalization of $3010.0 billion USD.
+Apple's stock price is $231.83 USD. It has a P/E ratio of 30.3 and a 
+market capitalization of $3010.0 billion USD.
+```
 
-⚙️ Run Locally
-1. Clone & Setup
-git clone https://github.com/yourname/finance-analyst.git
-cd finance-analyst
+---
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+- Python 3.8+
+- CUDA-compatible GPU (recommended)
+- 8GB+ RAM
+
+### Quick Start
+
+**1. Clone the Repository**
+```bash
+git clone https://github.com/prasunbhattarai/finance-llm-analyst.git
+
+```
+
+**2. Install Dependencies**
+```bash
 pip install -r requirements.txt
+```
 
-2. Fine-tune Model
-python src/train/finetune_lora.py --config configs/finetune.yaml
+**3. Fine-tune the Model**
+```bash
+First:
+python src/train/preprocessing.py --config configs/finetune.yaml
+Then:
+python src/train/train.py --config configs/finetune.yaml
+```
 
-3. Run RAG Assistant
+**4. Run the RAG Assistant**
+```bash
 python src/rag/main.py --config configs/rag.yaml
+```
 
-📊 Evaluation
+---
 
-Perplexity: 2.95
+## 📊 Evaluation Results
 
-📉 Training Behavior
+### Model Performance
 
-The training and validation loss curves indicate rapid convergence within the first few hundred steps, followed by a stable plateau:
+| Metric | Value |
+|--------|-------|
+| **Perplexity** | 2.95 |
+| **Initial Loss** | 11.3 |
+| **Final Loss** | 1.08 |
+| **Convergence** | ✅ Stable |
+| **Overfitting** | ❌ None observed |
 
-Initial loss: ~11.3 → Final loss: ~1.08
+### Training Behavior
 
-Validation closely tracks training loss throughout
+The training and validation loss curves demonstrate excellent convergence:
 
-No overfitting or instability observed
+- 📉 **Rapid initial learning** — Loss drops significantly in first few hundred steps
+- 📊 **Stable plateau** — Consistent performance after convergence
+- 🎯 **Validation tracking** — Val loss closely follows training loss
+- ✅ **Strong generalization** — Model adapts well to financial instruction domain
 
-This behavior confirms that the model successfully adapted to the financial instruction domain while maintaining strong generalization.
+<div align="center">
+  <img src="assets/training_loss.png" alt="Training and Validation Loss" width="600">
+  <p><i>Training and validation loss showing smooth convergence</i></p>
+</div>
 
-<div align="center"> <img src="assets/training_loss.png" alt="Training and Validation Loss" width="500"> </div>
+---
 
+## 🔮 Future Enhancements
 
+### 🧩 Fine-tuning Improvements
+- [ ] Incorporate larger financial corpora (EDGAR filings, SEC 10-K, financial news)
+- [ ] Apply LoRA rank search or QLoRA for memory-efficient multi-domain tuning
+- [ ] Introduce instruction-following refinement with expert Q&A datasets
 
-Loss curve shows strong convergence with smooth validation behavior.
+### 🌐 RAG & Knowledge Expansion
+- [ ] Add trusted sources: Bloomberg, Yahoo Finance, IMF, World Bank, CNBC
+- [ ] Integrate live data APIs for real-time market updates
+- [ ] Implement hybrid retrieval (vector + keyword BM25)
 
-🔮 Future Improvements
+### 🧠 Pipeline Intelligence
+- [ ] Add reasoning feedback loops for factual consistency
+- [ ] Implement memory caching for prior user sessions
+- [ ] Evaluate on benchmark datasets (FinancialQA, BankExamQA)
+- [ ] Multi-language support for global markets
 
-🧩 Fine-tuning Enhancements
+---
 
-Use larger financial corpora (EDGAR filings, SEC 10-K, financial news)
+## 🤝 Contributing
 
-Apply LoRA rank search or QLoRA for memory-efficient multi-domain tuning
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
 
-Introduce instruction-following refinement with finance experts’ Q&A datasets
+---
 
-🌐 RAG & Knowledge Expansion
+## 📄 License
 
-Add more trusted finance domains: Bloomberg, Yahoo Finance, IMF, World Bank, CNBC, etc.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Integrate live data APIs for real-time market updates
+---
 
-Implement hybrid retrieval (vector + keyword BM25)
+## 🙏 Acknowledgments
 
-🧠 Pipeline Intelligence
+- **Qwen Team** for the base model
+- **Hugging Face** for transformers and PEFT libraries
+- **LangChain** for RAG orchestration
+- Financial data providers and open-source datasets
 
-Add reasoning feedback loops (self-reflection on factual consistency)
+---
 
-Memory caching of prior user sessions
+## 📞 Contact
 
-Evaluate on benchmark datasets (e.g., FinancialQA, BankExamQA)
+For questions or feedback, please open an issue or reach out to the maintainers.
 
-🏁 Summary
+---
 
-This project demonstrates a domain-specialized financial analyst assistant that blends:
-
-Efficient parameter-efficient fine-tuning (PEFT)
-
-Intelligent retrieval and reranking
-
-Accurate financial domain filtering
-
-It’s an end-to-end example of how to combine Qwen2.5 LoRA + RAG + LangChain for enterprise-grade domain QA.
+<div align="center">
+  <b>Built with ❤️ for the financial community</b>
+  <br><br>
+  <sub>Combining PEFT + RAG + LangChain for enterprise-grade domain QA</sub>
+</div>
