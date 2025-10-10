@@ -1,0 +1,51 @@
+Ticker,Company,Price,P/E Ratio,Market Cap (B)
+AAPL,Apple Inc.,231.83,30.3,3010.0
+MSFT,Microsoft Corp.,457.12,37.6,3390.0
+GOOGL,Alphabet Inc.,193.45,26.8,2390.0
+AMZN,Amazon.com Inc.,218.32,52.2,2260.0
+META,Meta Platforms Inc.,599.84,29.9,1520.0
+NVDA,NVIDIA Corp.,1071.27,60.5,2650.0
+TSLA,Tesla Inc.,385.65,218.0,1220.0
+AMD,Advanced Micro Devices,144.17,207.0,233.0
+INTC,Intel Corp.,42.53,20.1,178.0
+ORCL,Oracle Corp.,147.64,36.8,404.0
+JPM,JPMorgan Chase & Co.,226.42,11.9,651.0
+BAC,Bank of America,44.73,13.0,346.0
+WFC,Wells Fargo & Co.,64.59,11.3,226.0
+C,Citigroup Inc.,71.85,9.3,134.0
+GS,Goldman Sachs Group,471.1,17.1,153.0
+MS,Morgan Stanley,111.39,17.7,182.0
+V,Visa Inc.,319.62,31.5,651.0
+MA,Mastercard Inc.,523.64,37.9,484.0
+AXP,American Express Co.,286.21,18.3,207.0
+BLK,BlackRock Inc.,904.56,20.4,135.0
+JNJ,Johnson & Johnson,176.92,23.2,426.0
+PFE,Pfizer Inc.,30.85,13.5,174.0
+MRK,Merck & Co.,133.94,59.9,339.0
+ABBV,AbbVie Inc.,175.63,19.0,311.0
+UNH,UnitedHealth Group,584.52,30.8,534.0
+CVS,CVS Health Corp.,73.28,11.6,92.0
+BMY,Bristol-Myers Squibb,44.53,12.8,89.0
+LLY,Eli Lilly and Co.,1040.55,99.8,989.0
+GILD,Gilead Sciences,67.18,15.5,82.0
+AMGN,Amgen Inc.,341.32,22.3,180.0
+WMT,Walmart Inc.,75.28,29.7,603.0
+TGT,Target Corp.,182.14,18.9,84.0
+COST,Costco Wholesale,915.22,45.3,406.0
+HD,Home Depot Inc.,388.41,23.8,383.0
+LOW,Lowe's Companies,242.18,19.0,138.0
+NKE,Nike Inc.,102.63,28.6,156.0
+MCD,McDonald's Corp.,280.54,24.0,203.0
+SBUX,Starbucks Corp.,89.56,23.9,101.0
+KO,Coca-Cola Co.,62.34,24.7,268.0
+PEP,PepsiCo Inc.,167.18,23.8,229.0
+XOM,Exxon Mobil Corp.,130.23,13.1,513.0
+CVX,Chevron Corp.,172.45,13.4,317.0
+BP,BP plc,42.13,8.2,103.0
+SHEL,Shell plc,76.53,7.9,249.0
+CAT,Caterpillar Inc.,394.18,15.9,196.0
+BA,Boeing Co.,218.45,,133.0
+GE,General Electric,171.64,50.6,185.0
+HON,Honeywell International,220.36,24.7,142.0
+MMM,3M Company,122.17,11.8,67.0
+LMT,Lockheed Martin,503.81,20.6,120.0
