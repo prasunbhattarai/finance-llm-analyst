@@ -23,7 +23,6 @@ def post_processing(answer: str) -> str:
 
     sentences = [s.strip() for s in answer.split('.') if s.strip()]
 
-    # Keep max 3 sentences
-    trimmed = '. '.join(sentences[:3]) + ('.' if sentences else '')
+    trimmed = '. '.join(sentences[:5]) + ('.' if sentences else '')
 
     return trimmed

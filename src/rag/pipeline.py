@@ -45,7 +45,7 @@ class Pipeline:
             template=(
                 "You are an expert financial assistant. "
                 "Use ONLY the provided context to answer the user question in 3–4 sentences. \n\n"
-                "Your ENTIRE answer must be no longer than 3 sentences. "
+                "Your ENTIRE answer must be no longer than 6 sentences. "
                 "Question:\n{question}\n\n"
                 "Context:\n{context}\n\n"
                 "Answer:"

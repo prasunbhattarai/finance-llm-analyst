@@ -17,23 +17,22 @@ def is_finance_question(question: str, llm) -> bool:
     """
 
     check_prompt = f"""
-    Classify the following user question strictly as 'finance' or 'not finance'.
-    Only return one word: either finance or not.
+    You are a financial domain classifier.
+    Classify the following question as 'finance' if it relates to money, banking,
+    investing, markets, accounting, business, economics, taxes, or financial planning.
+    Otherwise classify it as 'not finance'.
+
+    Only respond with one word: 'finance' or 'not'.
     Question: "{question}"
     Answer:
     """
 
     result = llm.invoke(check_prompt)
 
-    if isinstance(result, dict):
-        result = result.get("text") or str(result)
+    match = re.search(r'Answer\s*[:\-]?\s*([A-Za-z]+)', result, re.IGNORECASE)
+    first_word = match.group(1).lower() 
 
-    result = result.strip().lower()
-
-    if "answer:" in result:
-        result = result.split("answer:")[-1].strip()
-
-    first_word = result.split()[0] if result else ""
-    first_word = re.sub(r'[^a-z]', '', first_word)
+    # print("Extracted:", first_word)
+    # print("Raw result:", result)
 
     return first_word == "finance"
