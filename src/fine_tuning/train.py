@@ -1,4 +1,5 @@
 import os
+import math
 import torch
 import yaml
 from datasets import load_from_disk
@@ -110,6 +111,7 @@ def get_training_config(cfg: dict) -> TrainingArguments:
         logging_steps=load_cfg["logging_steps"],
         save_strategy=load_cfg["save_strategy"],
         label_names=load_cfg["label_names"],
+        lr_scheduler_type=load_cfg["lr_scheduler_type"],
         logging_dir=load_cfg["logging_dir"],
         remove_unused_columns=load_cfg["remove_unused_columns"],
     )
@@ -139,9 +141,10 @@ def train(cfg: dict):
 
     training_config = get_training_config(cfg)
 
-    # Small train/eval split for demonstration
-    train_dataset = dataset.shuffle(seed=42).select(range(2000))
-    eval_dataset = dataset.shuffle(seed=42).select(range(2000, 2200))
+    split = dataset.train_test_split(test_size=0.1, seed=42)
+    train_dataset = split["train"]
+    eval_dataset = split["test"]
+
 
     trainer = Trainer(
         model=model,
@@ -152,6 +155,15 @@ def train(cfg: dict):
 
     trainer.train()
     model.save_pretrained(cfg["output"]["dir"])
+
+    log_path = os.path.join(cfg["output"]["dir"], "training_log.json")
+    import json
+    with open(log_path, "w") as f:
+        json.dump(trainer.state.log_history, f, indent=4)
+
+    print(f" Training logs saved to {log_path}")
+    results = trainer.evaluate()
+    print("Perplexity:", math.exp(results["eval_loss"]))
 
 
 if __name__ == "__main__":
