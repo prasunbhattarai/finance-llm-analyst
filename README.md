@@ -161,7 +161,7 @@ market capitalization of $3010.0 billion USD.
 
 **1. Clone the Repository**
 ```bash
-git clone https://github.com/prasunbhattarai/finance-llm-analyst.git
+git clone https://github.com/prasunbhattarai/finance-qa-assistant.git
 
 ```
 
