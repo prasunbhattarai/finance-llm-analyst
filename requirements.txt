@@ -30,4 +30,4 @@ scikit-learn>=1.4.0
 datasets>=2.19.0
 evaluate>=0.4.2
 
-cross-encoder>=0.1.0
+sentence-transformers>=2.2.2
