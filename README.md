@@ -1,6 +1,7 @@
 # 🧠 Finance Analyst
 
 > A domain-specialized Finance Q&A Agent combining LoRA fine-tuned Qwen2.5-3B with RAG for context-grounded, reliable financial insights.
+⚙️ Fine-tuning is optional — pre-trained LoRA weights will be automatically downloaded when you run the RAG assistant.
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -172,14 +173,14 @@ pip install -r requirements.txt
 **3. Fine-tune the Model**
 ```bash
 First:
-python src/train/preprocessing.py --config configs/finetune.yaml
+python src/fine_tuning/preprocessing.py 
 Then:
-python src/train/train.py --config configs/finetune.yaml
+python src/fine_tuning/train.py 
 ```
 
 **4. Run the RAG Assistant**
 ```bash
-python src/rag/main.py --config configs/rag.yaml
+python main.py 
 ```
 
 ---
@@ -258,9 +259,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 For questions or feedback, please open an issue or reach out to the maintainers.
 
 ---
-
-<div align="center">
-  <b>Built with ❤️ for the financial community</b>
-  <br><br>
-  <sub>Combining PEFT + RAG + LangChain for enterprise-grade domain QA</sub>
-</div>
