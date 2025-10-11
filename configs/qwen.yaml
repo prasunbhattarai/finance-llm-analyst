@@ -44,7 +44,7 @@ output:
 # For RAG
 
 Stocks:
-  stocks_dataset: "dataset/stocks_dataset/stocks_data.csv"
+  stocks_dataset: "dataset/stock_dataset/stocks_data.csv"
 
 Chroma:
   persist_dir: "chroma_db"
